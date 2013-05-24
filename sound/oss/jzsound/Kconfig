@@ -1,0 +1,108 @@
+
+menuconfig SOUND_OSS_XBURST
+	bool "Open Sound System of xburst"
+	#depends on SOUND_OSS_CORE
+	default y
+	help
+	  Say 'Y' to enable Open Sound System drivers of xburst.
+
+
+if SOUND_OSS_XBURST
+#*******************************************************
+config SOUND_I2S_JZ47XX
+	bool "Jz On-Chip I2S driver"
+	help
+		Say 'Y' to enable On-Chip i2s
+
+if SOUND_I2S_JZ47XX
+
+config CODEC_STANDBY
+depends on JZ_EXTERNAL_CODEC || JZ_INTERNAL_CODEC
+bool "codec standby"
+help
+	Say "Y" to enable codec standby function
+
+menuconfig JZ_INTERNAL_CODEC
+
+	bool "xburst internal coedc"
+	depends on SOUND_I2S_JZ47XX
+	help
+		Say "Y" to select xburst internal codec.
+
+if JZ_INTERNAL_CODEC
+
+	config JZ4780_INTERNAL_CODEC
+	bool "jz4780 internal codec"
+	depends on SOC_4780
+	help
+		Say "Y" to enable jz4780 internal codec.
+
+	config JZ4775_INTERNAL_CODEC
+	bool "jz4775 internal codec"
+	depends on SOC_4775
+	help
+		Say "Y" to enable jz4775 internal codec.
+endif #JZ_INTERNAL_CODEC
+
+menuconfig JZ_EXTERNAL_CODEC
+	bool "xburst external codec"
+	help
+		Say	"Y" to setect xburst external codec		\
+		Note :it is will be unused when internal codec select
+
+if JZ_EXTERNAL_CODEC #external codec
+
+	config ATC2603_EXTERNAL_CODEC
+	depends on SPI
+	bool "atc2603 external codec"
+	help
+		Say "Y" to enable atc260x codec
+
+endif #JZ_EXTERNAL_CODEC
+
+endif #SOUND_I2S_JZ47XX
+#******************************************************
+config SOUND_PCM_JZ47XX
+	bool "Jz On-Chip PCM driver"
+	help
+		Say 'Y' to enable On-Chip pcm
+if SOUND_PCM_JZ47XX
+menu "sound pcm codec list"
+endmenu
+endif #SOUND_PCM_JZ47XX
+
+menuconfig SOUND_XBURST_DETECT
+	bool "sound detect device of xburst"
+	default n
+	help
+	  Say 'Y' to enable sound detect devices support.
+
+if SOUND_XBURST_DETECT
+
+menu "JZ headset detect"
+
+config JZ_HP_DETECT_CODEC
+	bool "jz4780 headphone codec detect"
+	depends on SOUND_I2S_JZ47XX || SOUND_PCM_JZ47XX
+	help
+	Say "Y" to enable codec headphone detect.
+
+config JZ_HP_DETECT_GPIO
+	bool "jz4780 headphone gpio detect"
+	help
+	Say "Y" to enable gpio headphone detect.
+endmenu #"JZ headset detect"
+
+#menu "JZ dock detect"
+
+#endmenu
+
+endif #SOUND_XBURST_DETECT
+
+#menuconfig SOUND_XBURST_DEBUG
+#	bool "sound debug device of xburst"
+#	default n
+#	help
+#	  Say 'Y' to enable sound debug devices support.
+#
+endif #SOUND_OSS_XBURST
