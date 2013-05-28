@@ -1,0 +1,236 @@
+#
+# NAND subsystem configuration
+# drivers/nand/Kconfig
+#
+
+menuconfig NAND
+	tristate "NAND support"
+	depends on HAS_IOMEM
+	help
+          This enables support for NAND flash
+	  If you want NAND support, you should say Y here and also to the
+	  specific driver for your bus adapter(s) below.
+
+
+if NAND
+
+config NAND_JZ4780
+	bool "Support NAND Flash device on JZ4780"
+        depends on (SOC_4780 || SOC_4775) && NAND
+        default y
+
+choice
+        prompt "select real or fake nand driver for test"
+        depends on NAND_JZ4780
+        default REAL_NAND_DRIVER 
+
+config  REAL_NAND_DRIVER
+        bool 'use real nand driver test'
+        help
+          use real nand driver test nand.
+
+config  FAKE_NAND_DRIVER
+        bool 'use fake nand driver test'
+        help
+          use fake nand driver test nand.
+
+endchoice
+
+config NEMC_SRAM_8BIT
+	bool "Support JZ4780 8bit sram setting"
+	depends on NAND_JZ4780_FUNCTION && NAND_COMMON
+	default n
+        help
+	  If you want set JZ4780 sram function. This selects default is y.
+
+config NAND_JZ4780_FUNCTION
+	bool "Support JZ4780 function setting"
+        depends on NAND_JZ4780 && !MMC0_JZ4780_PA_4BIT && !MMC0_JZ4780_PA_8BIT &&  !MMC0_JZ4780_PA_4BIT_RESET && ! MMC0_JZ4780_PA_8BIT_RESET
+        select NAND_COMMON
+        default y
+        help
+	  This selects the NAND function for JZ4780 support. 
+          If you have an JZ4780 platform with a NAND slot,
+          say Y here.
+
+	  If unsure, say N.
+          NOTE: If GPIOA is selected by MSC0, Nand function
+          Setting will be hiding.
+
+config NAND_COMMON
+	bool "NAND_COMMON"
+	depends on NAND_JZ4780_FUNCTION
+        help
+	  If you want set NAND function. This selects default 
+          is y.
+
+config NAND_CS1
+	bool "NAND_CS1"
+        depends on NAND_JZ4780_FUNCTION
+        default y
+config NAND_CS2
+	bool "NAND_CS2"
+        depends on NAND_JZ4780_FUNCTION
+
+config NAND_CS3
+	bool "NAND_CS3"
+        depends on NAND_JZ4780_FUNCTION
+
+config NAND_CS4
+	bool "NAND_CS4"
+        depends on NAND_JZ4780_FUNCTION
+
+config NAND_CS5
+	bool "NAND_CS5"
+        depends on NAND_JZ4780_FUNCTION
+
+config NAND_CS6
+	bool "NAND_CS6"
+        depends on NAND_JZ4780_FUNCTION
+
+choice
+        prompt "8 bit or 16 bit NAND bus width"
+        depends on NAND_JZ4780
+        default NAND_BUS_WIDTH_8
+
+config NAND_BUS_WIDTH_8
+        bool '8 bit'
+        help
+          The bus width of NAND flash is 8 bit.
+
+config  NAND_BUS_WIDTH_16
+        bool '16 bit'
+        help
+          The bus width of NAND flash is 16 bit.
+
+endchoice
+
+choice
+        prompt "512 byte or 1024 byte NAND ecc size "
+        depends on NAND_JZ4780
+        default NAND_BCH_ECCSIZE_1024
+
+config NAND_BCH_ECCSIZE_DEFAULT
+        bool 'default'
+        help
+          The ecc size of NAND flash is default.
+
+config NAND_BCH_ECCSIZE_512
+        bool '512 byte'
+        help
+          The ecc size of NAND flash is 512 byte.
+
+config  NAND_BCH_ECCSIZE_1024
+        bool '1024 byte'
+        help
+          The bus width of NAND flash is 1024 byte.
+
+endchoice
+
+choice
+	prompt "ECC type"
+        depends on NAND_JZ4780
+	default NAND_HW_BCH
+
+config  NAND_SW_BCH
+	bool 'Select software BCH'
+
+config	NAND_HW_BCH
+	bool 'Select hardware BCH'
+
+endchoice
+
+choice
+        prompt "4 bit or 8 bit ... 64 bit BCH ecc"
+        depends on NAND_JZ4780 && NAND_HW_BCH
+        default NAND_HW_BCH_AUTO
+
+config  NAND_HW_BCH_AUTO
+        bool 'auto'
+
+config  NAND_HW_BCH_4BIT
+        bool '4 bit'
+
+config  NAND_HW_BCH_8BIT
+        bool '8 bit'
+
+config  NAND_HW_BCH_12BIT
+        bool '12 bit'
+
+config  NAND_HW_BCH_16BIT
+        bool '16 bit'
+
+config  NAND_HW_BCH_20BIT
+        bool '20 bit'
+
+config  NAND_HW_BCH_24BIT
+        bool '24 bit'
+
+config	NAND_HW_BCH_28BIT
+	bool '28 bit'
+
+config 	NAND_HW_BCH_32BIT
+	bool '32 bit'
+
+config	NAND_HW_BCH_36BIT
+	bool '36 bit'
+
+config	NAND_HW_BCH_40BIT
+	bool '40 bit'
+
+config	NAND_HW_BCH_44BIT
+	bool '44 bit'
+
+config	NAND_HW_BCH_48BIT
+	bool '48 bit'
+
+config	NAND_HW_BCH_52BIT
+	bool '52 bit'
+
+config	NAND_HW_BCH_56BIT
+	bool '56 bit'
+
+config	NAND_HW_BCH_60BIT
+	bool '60 bit'
+
+config	NAND_HW_BCH_64BIT
+	bool '64 bit'
+
+endchoice
+
+choice
+        prompt "The Nand output driver"
+        depends on NAND_JZ4780
+        default NAND_LOW_DRIVER
+
+config	NAND_LOW_DRIVER
+	bool 'low driver'
+
+config	NAND_NORMAL_DRIVER
+	bool 'normal driver'
+
+config	NAND_HIGH_DRIVER
+	bool 'high driver'
+
+endchoice
+
+config 	NAND_DMA
+	depends on NAND_JZ4780 && !FAKE_NAND_DRIVER
+	bool 'Use DMA mode'
+        default y
+	help
+	  This enables using DMA for reading and writing NAND flash, if not selected,
+          then CPU mode is used.
+
+config 	TOGGLE_NAND
+	depends on NAND_JZ4780
+	bool 'Use Toggle NAND'
+	help
+	  This enables that Toggle NAND flash is used, if not selected,
+          Connection nand flash is used.
+
+config MUL_PARTS
+	depends on NAND_JZ4780
+	bool  "Mul Parts"
+	default y
+endif # NAND

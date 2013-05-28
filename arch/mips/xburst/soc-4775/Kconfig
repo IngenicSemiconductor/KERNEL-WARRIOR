@@ -1,0 +1,19 @@
+
+choice
+	prompt "Board type"
+	depends on SOC_4775
+	default BOARD_4775_TEST
+
+config BOARD_4775_ORION
+        bool "ORION"
+
+config BOARD_4775_MENSA
+        bool "MENSA"
+
+endchoice
+
+config BOARD_NAME
+	string
+	default "orion" if BOARD_4775_ORION
+	default "mensa" if BOARD_4775_MENSA
+

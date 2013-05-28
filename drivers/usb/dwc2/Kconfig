@@ -1,0 +1,66 @@
+config USB_DWC2
+	tristate "DesignWare Core USB 2.0 Hi-Speed On-The-Go(OTG)"
+	depends on USB
+	help
+	  Say Y or M here if your system has a Dual Role SuperSpeed
+	  USB controller based on the DesignWare USB2.0 IP Core.
+
+	  If you choose to build this driver is a dynamically linked
+	  module, the module will be called dwc2.ko.
+
+if USB_DWC2
+
+choice
+	prompt "Driver Mode"
+	help
+	  Select Driver Mode
+
+config USB_DWC2_DUAL_ROLE
+	bool "Both Host and Device"
+	help
+	  Say Y here to enable both Host and Device function
+
+config USB_DWC2_HOST_ONLY
+	bool "Host Mode Only"
+	help
+	  Say Y here to enable Host function only
+
+config USB_DWC2_DEVICE_ONLY
+	bool "Device Mode Only"
+	help
+	  Say Y Here to enable Device function only
+
+endchoice
+
+config BOARD_HAS_NO_DETE_FACILITY
+       bool "board has no plug detect facility"
+       default n
+       help
+         Say Y here if your board has no plug detect facility
+
+config USB_DWC2_DEBUG
+	bool "Enable Debugging(dev_dbg) Messages"
+	help
+	  Say Y here to enable debugging messages on DWC2 Driver.
+
+config USB_DWC2_VERBOSE
+	bool "Enable Verbose Debugging(dev_vdbg) Messages"
+	depends on USB_DWC2_DEBUG
+	help
+	  Say Y here to enable verbose debugging messages on DWC2 Driver.
+
+config USB_DWC2_VERBOSE_VERBOSE
+	bool "Enable Very Verbose Debugging Messagers"
+	default y
+	help
+	  enable debugging messages for developer debug, these debugging messages
+          are switchable write 1 to file under /sys/module/dwc2/parameters/,
+          the default value is 0, so you can always say Y here and won't get boring.
+
+config USB_DWC2_HOST_TRACER
+	bool "Enable tracing host operation flow"
+	help
+	  Say Y here to enable tracing host operation flow,
+	  you must reserve 192M~256M memory
+
+endif
