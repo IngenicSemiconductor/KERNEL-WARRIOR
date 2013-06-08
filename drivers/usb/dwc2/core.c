@@ -1497,13 +1497,6 @@ static int dwc2_probe(struct platform_device *pdev)
 	 */
 	dwc->otg_ver = 1;
 
-	ret = request_irq(irq, dwc2_interrupt, 0, "dwc2", dwc);
-	if (ret) {
-		dev_err(dwc->dev, "failed to request irq #%d --> %d\n",
-			irq, ret);
-		goto fail_req_irq;
-	}
-
 	dwc2_init_csr(dwc);
 
 	dwc2_disable_global_interrupts(dwc);
@@ -1529,6 +1522,13 @@ static int dwc2_probe(struct platform_device *pdev)
 	}
 #endif
 
+	ret = request_irq(irq, dwc2_interrupt, 0, "dwc2", dwc);
+	if (ret) {
+		dev_err(dwc->dev, "failed to request irq #%d --> %d\n",
+			irq, ret);
+		goto fail_req_irq;
+	}
+
 	/* TODO: if enable ADP support, start ADP here instead of enable global interrupts */
 	dwc2_enable_global_interrupts(dwc);
 
@@ -1541,6 +1541,8 @@ static int dwc2_probe(struct platform_device *pdev)
 	return 0;
 
 fail_init_debugfs:
+	free_irq(irq, dwc);
+fail_req_irq:
 #if DWC2_DEVICE_MODE_ENABLE
 	dwc2_gadget_exit(dwc);
 fail_init_gadget:
@@ -1551,9 +1553,7 @@ fail_init_host:
 #endif
 	dwc2_core_exit(dwc);
 fail_init_core:
-	free_irq(irq, dwc);
 
-fail_req_irq:
 	return ret;
 }
 
